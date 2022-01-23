@@ -77,15 +77,14 @@ if (strpos($union, $device) !== false) {
 // Watch carefully: we're going to transparently unzip/mount that gamezip without *ever* touching persistent storage.
 // Okay, we're mounting it. Log that.
 error_log("Mounting ${devLocation}${device}");
-// Symlink the device to a .zip, so that avfs knows what to do with it.
-exec("sudo ln -s ${devLocation}${device} /tmp/${device}.zip");
 // Make a folder for the gamezip contents to be fuzzy-mounted at.
 exec("mkdir /tmp/${device}");
 // Funny thing about avfs: it lets you access the contents of zips transparantly.
 // "/root/.avfs" is where avfs is running.
-// "/root/.avfs/tmp/${device}.zip#" is the "folder" with the contents of that zip.
+// "/root/.avfs/tmp/${device}#uzip" is the "folder" with the contents of that zip.
+// The #uzip extension tells avfs that it's a zip - avfs supports many other formats too.
 // Fuzzy-mounting is just a case-insensitive bind-mount.
-exec("sudo fuzzyfs /root/.avfs/tmp/${device}.zip# /tmp/${device} -o allow_other");
+exec("sudo fuzzyfs /root/.avfs${devLocation}${device}#uzip /tmp/${device} -o allow_other");
 // The location of the hypothetical content folder.
 $content = "/tmp/${device}/content";
 // Check that a content folder exists.
