@@ -64,18 +64,16 @@ if (strpos($union, $device) !== false) {
 	die("ALREADY_MOUNTED");
 }
 // Watch carefully: we're going to transparently unzip/mount that gamezip without *ever* touching persistent storage.
-// Okay, we're mounting it. Log that.
 error_log("Mounting ${devLocation}${device}");
 
-exec("mkdir /tmp/${device}");
-// Funny thing about avfs: it lets you access the contents of zips transparantly.
-// "/root/.avfs" is where avfs is running.
-// "/root/.avfs/tmp/${device}#uzip" is the "folder" with the contents of that zip.
-// The #uzip extension tells avfs that it's a zip - avfs supports many other formats too.
-// Fuzzy-mounting is just a case-insensitive bind-mount.
-exec("sudo fuzzyfs /root/.avfs${devLocation}${device}#uzip /tmp/${device} -o allow_other");
+exec("mkdir /tmp/${device} /tmp/${device}.fuzzy");
 
-$content = "/tmp/${device}/content";
+// fuse-archive will allow us to transparently access the contents of a zip.
+exec("sudo fuse-archive ${devLocation}${device} /tmp/${device} -o allow_other");
+// Fuzzy-mounting is just a case-insensitive bind-mount.
+exec("sudo fuzzyfs /tmp/${device} /tmp/${device}.fuzzy -o allow_other");
+
+$content = "/tmp/${device}.fuzzy/content";
 
 if (!is_dir($content)) {
 	http_response_code(400);
