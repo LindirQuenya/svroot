@@ -24,7 +24,7 @@ $device_encoded = urlencode($device);
 $context = stream_context_create(['http' => ['ignore_errors' => true]]);
 $message = file_get_contents("http://127.0.0.1:3030/mount?devname=${device_encoded}", false, $context);
 // Grab the status code from the response.
-preg_match('{HTTP\/\S*\s(\d{3})}', $http_response_header[0], $match)
+preg_match('{HTTP\/\S*\s(\d{3})}', $http_response_header[0], $match);
 // Forward the response code and body back to the client.
 http_response_code((int)$match[1]);
 echo $message;
