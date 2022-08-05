@@ -35,6 +35,14 @@ RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteCond ${DOCUMENT_ROOT}/$1/index.php -f
 RewriteRule ^/(.*)/$ /$1/index.php [L]
 
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond ${DOCUMENT_ROOT}/$1/index.phtml -f
+RewriteRule ^/(.*)/$ /$1/index.phtml [L]
+
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond ${DOCUMENT_ROOT}/$1/index.php5 -f
+RewriteRule ^/(.*)/$ /$1/index.php5 [L]
+
 # if rewrite failed, forward to the legacy server
 RewriteCond %{ENV:REDIRECT_STATUS} ^.
 RewriteCond %{ENV:ALREADY_FORWARDED} ^$
